@@ -1,10 +1,13 @@
 class ProductsController < ApplicationController
+  before_filter :ensure_logged_in, :only => [:edit, :new]
+  
   def index
     @products = Product.order("id")
   end
 
   def show
     @product = Product.find(params[:id])
+
   end
 
   def edit
@@ -25,7 +28,8 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
+    user = current_user
+    @product = user.products.new(product_params)
     if @product.save
       redirect_to product_path(@product)
     else
