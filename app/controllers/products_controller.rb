@@ -1,25 +1,27 @@
 class ProductsController < ApplicationController
   before_filter :ensure_logged_in, :only => [:edit, :new]
-  
+  before_filter :load_product, :except => [:index, :new, :create]
+
   def index
     @products = Product.order("id")
   end
 
   def show
-    @product = Product.find(params[:id])
-
+    @review = @product.reviews.new
   end
 
   def edit
-    @product = Product.find(params[:id])
   end
 
   def update
-    @product = Product.find(params[:id])
-    if @product.update_attributes(product_params)
-      redirect_to product_path(@product)
+    if current_user.id == @product.user_id
+      if @product.update_attributes(product_params)
+        redirect_to product_path(@product)
+      else
+        render :edit
+      end
     else
-      render :edit
+      redirect_to product_path(@product), :alert => "You do not have permission to update this item."
     end
   end
 
@@ -28,8 +30,7 @@ class ProductsController < ApplicationController
   end
 
   def create
-    user = current_user
-    @product = user.products.new(product_params)
+    @product = current_user.products.new(product_params)
     if @product.save
       redirect_to product_path(@product)
     else
@@ -38,15 +39,22 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    @product = Product.find(params[:id])
-    @product.destroy
-    redirect_to products_path
+    if current_user.id == @product.user_id
+      @product.destroy
+      redirect_to products_path
+    else
+      redirect_to product_path(@product), :alert => "You do not have permission to delete this item."
+    end
   end
 
   private
 
   def product_params
     params.require(:product).permit(:name, :description, :price)
+  end
+
+  def load_product
+    @product = Product.find(params[:id])
   end
 end
 

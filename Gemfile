@@ -38,6 +38,8 @@ gem 'bcrypt-ruby', '~> 3.1.2', :require => 'bcrypt'
 # Use unicorn as the app server
 # gem 'unicorn'
 
+gem 'quiet_assets', group: :development
+
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
 
