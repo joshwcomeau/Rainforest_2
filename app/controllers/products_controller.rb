@@ -3,7 +3,11 @@ class ProductsController < ApplicationController
   before_filter :load_product, :except => [:index, :new, :create]
 
   def index
-    @products = Product.order("id")
+    @products = if params[:search]
+      Product.where("name ILIKE ?", "%#{params[:search]}%")
+    else 
+      Product.order("id")
+    end
   end
 
   def show
