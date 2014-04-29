@@ -8,6 +8,11 @@ class ProductsController < ApplicationController
     else 
       Product.order("id")
     end
+
+    if request.xhr?
+      render partial: "product", collection: @products
+    end
+
   end
 
   def show

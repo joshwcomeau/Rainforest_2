@@ -24,10 +24,7 @@
       <li><%= link_to "Register", new_user_path %></li>
     <% end %>
     <li>
-      <%= form_tag products_path, method: :get, id: 'search-form' do %>
         <%= text_field_tag :search, params[:search], placeholder: "Search..." %>
-        <%= submit_tag "Search" %>
-      <% end %>
     </li>
   </ul>
 </div>
